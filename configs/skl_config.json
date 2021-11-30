@@ -130,6 +130,20 @@
                 },
                 {
                     "source": "npy",
+                    "name": "epsilon",
+                    "training":
+                    {
+                        "x": "data/epsilon_x_train.npy",
+                        "y": "data/epsilon_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/epsilon_x_test.npy",
+                        "y": "data/epsilon_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
                     "name": "airline-ohe",
                     "training":
                     {
@@ -738,6 +752,34 @@
                     {
                         "x":    "data/mortgage1Q_x_train.npy",
                         "y":    "data/mortgage1Q_y_train.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "fried",
+                    "training":
+                    {
+                        "x": "data/fried_x_train.npy",
+                        "y": "data/fried_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/fried_x_test.npy",
+                        "y": "data/fried_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "year_prediction_msd",
+                    "training":
+                    {
+                        "x": "data/year_prediction_msd_x_train.npy",
+                        "y": "data/year_prediction_msd_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/year_prediction_msd_x_test.npy",
+                        "y": "data/year_prediction_msd_y_test.npy"
                     }
                 }
             ],

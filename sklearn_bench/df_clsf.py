@@ -15,13 +15,15 @@
 # ===============================================================================
 
 import argparse
-
+from timeit import default_timer as timer
 import bench
 import numpy as np
 
 
+
 def main():
     from sklearn.ensemble import RandomForestClassifier
+    from sklearn.cluster import KMeans
 
     # Load and convert data
     X_train, X_test, y_train, y_test = bench.load_data(params)
@@ -38,36 +40,84 @@ def main():
                                  random_state=params.seed,
                                  n_jobs=params.n_jobs)
 
+    model = KMeans(n_clusters=16)
     params.n_classes = len(np.unique(y_train))
-
+    # X_train['2000'] = y_train
+    # X_test['2000'] = y_test
+    # X_train.to_csv('train_air.csv', header=False, index=False)
+    # X_test.to_csv('test_air.csv', header=False, index=False)
+    # X_test.iloc[2:4].to_csv('test2.csv', header=False, index=False)
+    # print('done')
     fit_time, _ = bench.measure_function_time(clf.fit, X_train, y_train, params=params)
-    y_pred = clf.predict(X_train)
-    y_proba = clf.predict_proba(X_train)
-    train_acc = bench.accuracy_score(y_train, y_pred)
-    train_log_loss = bench.log_loss(y_train, y_proba)
-    train_roc_auc = bench.roc_auc_score(y_train, y_proba)
+    model.fit(X_train)
+    # y_pred = clf.predict(X_train)
+    # y_proba = clf.predict_proba(X_train)
+    # train_acc = bench.accuracy_score(y_train, y_pred)
+    # train_log_loss = bench.log_loss(y_train, y_proba)
+    # train_roc_auc = bench.roc_auc_score(y_train, y_proba)
 
-    predict_time, y_pred = bench.measure_function_time(
-        clf.predict, X_test, params=params)
-    y_proba = clf.predict_proba(X_test)
-    test_acc = bench.accuracy_score(y_test, y_pred)
-    test_log_loss = bench.log_loss(y_test, y_proba)
-    test_roc_auc = bench.roc_auc_score(y_test, y_proba)
+    # predict_time, y_pred = bench.measure_function_time(
+    #     clf.predict, X_test, params=params)
+    # y_proba = clf.predict_proba(X_test)
+    # test_acc = bench.accuracy_score(y_test, y_pred)
+    # test_log_loss = bench.log_loss(y_test, y_proba)
+    # test_roc_auc = bench.roc_auc_score(y_test, y_proba)
+    X_full1 = np.concatenate([X_train, X_test], axis=0)
+    X_full2 = np.concatenate([X_train, X_test], axis=0)
+    # X_full3 = np.concatenate([X_train, X_test], axis=0)
+    X_full = np.concatenate([X_full1, X_full2], axis=0)
+    pred_time_set_x1_1 = np.zeros([100,])
+    pred_time_set_x1_100 = np.zeros([100,])
+    # pred_time_set_x1_test = np.zeros([100,])
+    pred_time_set_x1_10000 = np.zeros([100,])
+    # pred_time_set_x10 = np.zeros([100,])
+    # pred_time_set_x100 = np.zeros([100,])
+    for i in range(100):
+        model.predict(X_test)
+        model.predict(X_test)
+        pred_time_x1_1, _ = bench.measure_function_time(
+            clf.predict, X_full[i].reshape(1, -1), params=params)
+        model.predict(X_test)
+        model.predict(X_test)
+        pred_time_x1_100, _ = bench.measure_function_time(
+            clf.predict, X_full[i*100].reshape(1, -1), params=params)
+        model.predict(X_test)
+        model.predict(X_test)
+        pred_time_x1_10000, _ = bench.measure_function_time(
+            clf.predict, X_full[i*10000].reshape(1, -1), params=params)
+        # pred_time_x10, _ = bench.measure_function_time(
+        #     clf.predict, X_train.iloc[10*i:10*(i+1), :], params=params)
+        # pred_time_x100, _ = bench.measure_function_time(
+        #     clf.predict, X_train.iloc[100*i:100*(i+1), :], params=params)
+        pred_time_set_x1_1[i] = pred_time_x1_1
+        pred_time_set_x1_100[i] = pred_time_x1_100
+        pred_time_set_x1_10000[i] = pred_time_x1_10000
+        # pred_time_set_x10[i] = pred_time_x10
+        # pred_time_set_x100[i] = pred_time_x100
+    print('------------------------------------------------------------------')
+    print(pred_time_set_x1_1[:])
+    print('------------------------------------------------------------------')
+
+    inf_time_x1_1 = np.mean(pred_time_set_x1_1)
+    inf_time_x1_100 = np.mean(pred_time_set_x1_100)
+    inf_time_x1_10000 = np.mean(pred_time_set_x1_10000)
+    # inf_time_x10 = np.mean(pred_time_set_x10)
+    # inf_time_x100 = np.mean(pred_time_set_x100)
 
     bench.print_output(
         library='sklearn',
         algorithm='df_clsf',
-        stages=['training', 'prediction'],
+        stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
         params=params,
-        functions=['df_clsf.fit', 'df_clsf.predict'],
-        times=[fit_time, predict_time],
+        functions=['df_clsf.predict', 'df_clsf.predict', 'df_clsf.predict'],
+        times=[inf_time_x1_1, inf_time_x1_100, inf_time_x1_10000],
         metric_type=['accuracy', 'log_loss', 'roc_auc'],
         metrics=[
-            [train_acc, test_acc],
-            [train_log_loss, test_log_loss],
-            [train_roc_auc, test_roc_auc],
+            [None, None, None],
+            [None, None, None],
+            [None, None, None],
         ],
-        data=[X_train, X_test],
+        data=[X_train, X_train, X_train],
         alg_instance=clf,
     )
 
@@ -93,6 +143,9 @@ if __name__ == "__main__":
                         help='Needed impurity decrease for node splitting')
     parser.add_argument('--no-bootstrap', dest='bootstrap', default=True,
                         action='store_false', help="Don't control bootstraping")
+    parser.add_argument('--device', default='None', type=str,
+                        choices=('host', 'cpu', 'gpu', 'None'),
+                        help='Execution context device')
 
     params = bench.parse_args(parser)
     bench.run_with_context(params, main)

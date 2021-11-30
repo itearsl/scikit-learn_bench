@@ -15,47 +15,79 @@
 # ===============================================================================
 
 import argparse
-
+import numpy as np
 import bench
 
 
 def main():
     from sklearn.linear_model import Lasso
+    from sklearn.cluster import KMeans
 
     # Load data
     X_train, X_test, y_train, y_test = bench.load_data(params)
 
+
     # Create our regression object
     regr = Lasso(fit_intercept=params.fit_intercept, alpha=params.alpha,
                  tol=params.tol, max_iter=params.maxiter, copy_X=False)
-
+    kmeans = KMeans(n_clusters=16)
+    kmeans.fit(X_test)
     # Time fit
     fit_time, _ = bench.measure_function_time(regr.fit, X_train, y_train, params=params)
 
     # Time predict
-    predict_time, yp = bench.measure_function_time(
-        regr.predict, X_train, params=params)
+    # predict_time, yp = bench.measure_function_time(
+    #     regr.predict, X_train, params=params)
 
-    train_rmse = bench.rmse_score(y_train, yp)
-    train_r2 = bench.r2_score(y_train, yp)
-    yp = regr.predict(X_test)
-    test_rmse = bench.rmse_score(y_test, yp)
-    test_r2 = bench.r2_score(y_test, yp)
+    # train_rmse = bench.rmse_score(y_train, yp)
+    # train_r2 = bench.r2_score(y_train, yp)
+    # yp = regr.predict(X_test)
+    # test_rmse = bench.rmse_score(y_test, yp)
+    # test_r2 = bench.r2_score(y_test, yp)
+    full_data = np.concatenate([X_train, X_test], axis=0)
+    
+    pred_time_set_x1 = np.zeros([100,])
+    pred_time_set_x10 = np.zeros([100,])
+    pred_time_set_x100 = np.zeros([100,])
+    print(X_test.shape)
+    for i in range(100):
+        kmeans.predict(X_train)
+        kmeans.predict(X_train)
+        predict_time_x1, _ = bench.measure_function_time(
+            regr.predict, full_data[i].reshape(1,-1), params=params)
+
+        kmeans.predict(X_train)
+        kmeans.predict(X_train)
+        predict_time_x10, _ = bench.measure_function_time(
+            regr.predict, full_data[10 * i:10 * (i + 1)], params=params)
+        
+        kmeans.predict(X_train)
+        kmeans.predict(X_train)
+        predict_time_x100, _ = bench.measure_function_time(
+            regr.predict, full_data[100 * i:100 * (i + 1)], params=params)
+
+        pred_time_set_x1[i] = predict_time_x1
+        pred_time_set_x10[i] = predict_time_x10
+        pred_time_set_x100[i] = predict_time_x100
+
+    inf_time_x1 = np.mean(pred_time_set_x1)
+    inf_time_x10 = np.mean(pred_time_set_x1)
+    inf_time_x100 = np.mean(pred_time_set_x1)
 
     bench.print_output(
         library='sklearn',
         algorithm='lasso',
-        stages=['training', 'prediction'],
+        stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
         params=params,
-        functions=['Lasso.fit', 'Lasso.predict'],
-        times=[fit_time, predict_time],
+        functions=['Lasso.predict', 'Lasso.predict', 'Lasso.predict'],
+        times=[inf_time_x1, inf_time_x10, inf_time_x100],
         metric_type=['rmse', 'r2_score', 'iter'],
         metrics=[
-            [train_rmse, test_rmse],
-            [train_r2, test_r2],
-            [int(regr.n_iter_), int(regr.n_iter_)],
+            [None, None, None],
+            [None, None, None],
+            [None, None, None],
         ],
-        data=[X_train, X_test],
+        data=[full_data, full_data, full_data],
         alg_instance=regr,
     )
 
