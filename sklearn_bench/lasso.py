@@ -71,8 +71,8 @@ def main():
         pred_time_set_x100[i] = predict_time_x100
 
     inf_time_x1 = np.mean(pred_time_set_x1)
-    inf_time_x10 = np.mean(pred_time_set_x1)
-    inf_time_x100 = np.mean(pred_time_set_x1)
+    inf_time_x10 = np.mean(pred_time_set_x10)
+    inf_time_x100 = np.mean(pred_time_set_x100)
 
     bench.print_output(
         library='sklearn',

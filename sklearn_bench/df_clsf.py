@@ -42,12 +42,12 @@ def main():
 
     model = KMeans(n_clusters=16)
     params.n_classes = len(np.unique(y_train))
-    # X_train['2000'] = y_train
-    # X_test['2000'] = y_test
-    # X_train.to_csv('train_air.csv', header=False, index=False)
-    # X_test.to_csv('test_air.csv', header=False, index=False)
+    X_train['2000'] = y_train
+    X_test['2000'] = y_test
+    X_train.iloc[:1000, :].to_csv('train_eps_1000.csv', header=False, index=False)
+    X_test.iloc[:1000, :].to_csv('test_eps_1000.csv', header=False, index=False)
     # X_test.iloc[2:4].to_csv('test2.csv', header=False, index=False)
-    # print('done')
+    print('done')
     fit_time, _ = bench.measure_function_time(clf.fit, X_train, y_train, params=params)
     model.fit(X_train)
     # y_pred = clf.predict(X_train)
@@ -143,9 +143,6 @@ if __name__ == "__main__":
                         help='Needed impurity decrease for node splitting')
     parser.add_argument('--no-bootstrap', dest='bootstrap', default=True,
                         action='store_false', help="Don't control bootstraping")
-    parser.add_argument('--device', default='None', type=str,
-                        choices=('host', 'cpu', 'gpu', 'None'),
-                        help='Execution context device')
 
     params = bench.parse_args(parser)
     bench.run_with_context(params, main)

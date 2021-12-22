@@ -22,6 +22,7 @@ import numpy as np
 
 def main():
     from sklearn.neighbors import KNeighborsRegressor
+    from sklearn.cluster import KMeans
 
     # Load generated data
     X_train, X_test, y_train, y_test = bench.load_data(params)
@@ -37,17 +38,50 @@ def main():
     # Measure time and accuracy on fitting
     train_time, _ = bench.measure_function_time(
         knn_regr.fit, X_train, y_train, params=params)
-    if params.task == 'regression':
-        y_pred = knn_regr.predict(X_train)
-        train_rmse = bench.rmse_score(y_train, y_pred)
-        train_r2 = bench.r2_score(y_train, y_pred)
+
+    kmeans = KMeans(n_clusters=16)
+    kmeans.fit(X_test)
+    # if params.task == 'regression':
+    #     y_pred = knn_regr.predict(X_train)
+    #     train_rmse = bench.rmse_score(y_train, y_pred)
+    #     train_r2 = bench.r2_score(y_train, y_pred)
 
     # Measure time and accuracy on prediction
     if params.task == 'regression':
-        predict_time, yp = bench.measure_function_time(knn_regr.predict, X_test,
-                                                       params=params)
-        test_rmse = bench.rmse_score(y_test, yp)
-        test_r2 = bench.r2_score(y_test, yp)
+
+        full_data = np.concatenate([X_train, X_test], axis=0)
+    
+        pred_time_set_x1 = np.zeros([100,])
+        pred_time_set_x10 = np.zeros([100,])
+        pred_time_set_x100 = np.zeros([100,])
+        print(X_test.shape)
+        for i in range(100):
+            kmeans.predict(X_train)
+            kmeans.predict(X_train)
+            predict_time_x1, _ = bench.measure_function_time(
+                knn_regr.predict, full_data[i].reshape(1,-1), params=params)
+
+            kmeans.predict(X_train)
+            kmeans.predict(X_train)
+            predict_time_x10, _ = bench.measure_function_time(
+                knn_regr.predict, full_data[10 * i:10 * (i + 1)], params=params)
+            
+            kmeans.predict(X_train)
+            kmeans.predict(X_train)
+            predict_time_x100, _ = bench.measure_function_time(
+                knn_regr.predict, full_data[100 * i:100 * (i + 1)], params=params)
+
+            pred_time_set_x1[i] = predict_time_x1
+            pred_time_set_x10[i] = predict_time_x10
+            pred_time_set_x100[i] = predict_time_x100
+
+        inf_time_x1 = np.mean(pred_time_set_x1)
+        inf_time_x10 = np.mean(pred_time_set_x10)
+        inf_time_x100 = np.mean(pred_time_set_x100)
+        # predict_time, yp = bench.measure_function_time(knn_regr.predict, X_test,
+        #                                                params=params)
+        # test_rmse = bench.rmse_score(y_test, yp)
+        # test_r2 = bench.r2_score(y_test, yp)
     else:
         predict_time, _ = bench.measure_function_time(knn_regr.kneighbors, X_test,
                                                       params=params)
@@ -56,13 +90,13 @@ def main():
         bench.print_output(
             library='sklearn',
             algorithm=knn_regr._fit_method + '_knn_regr',
-            stages=['training', 'prediction'],
+            stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
             params=params,
-            functions=['knn_regr.fit', 'knn_regr.predict'],
-            times=[train_time, predict_time],
-            metric_type=['rmse', 'r2_score'],
-            metrics=[[train_rmse, test_rmse], [train_r2, test_r2]],
-            data=[X_train, X_test],
+            functions=['knn_regr.predict', 'knn_regr.predict', 'knn_regr.predict'],
+            times=[inf_time_x1, inf_time_x10, inf_time_x100],
+            metric_type='rmse',
+            metrics=[None, None, None],
+            data=[full_data, full_data, full_data],
             alg_instance=knn_regr,
         )
     else:

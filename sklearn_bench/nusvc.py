@@ -22,9 +22,14 @@ import numpy as np
 
 def main():
     from sklearn.svm import NuSVC
+    from sklearn.cluster import KMeans
+    import numpy as np
 
     X_train, X_test, y_train, y_test = bench.load_data(params)
     y_train = np.asfortranarray(y_train).ravel()
+
+    X_train_t = X_train.iloc[:2000]
+    y_train_t = y_train[:2000]
 
     if params.gamma is None:
         params.gamma = 1.0 / X_train.shape[1]
@@ -37,8 +42,11 @@ def main():
     clf = NuSVC(nu=params.nu, kernel=params.kernel, cache_size=params.cache_size_mb,
                 tol=params.tol, gamma=params.gamma, probability=params.probability,
                 random_state=43, degree=params.degree)
+    
+    kmeans = KMeans(n_clusters=16)
+    kmeans.fit(X_train_t)
 
-    fit_time, _ = bench.measure_function_time(clf.fit, X_train, y_train, params=params)
+    fit_time, _ = bench.measure_function_time(clf.fit, X_train_t, y_train_t, params=params)
     params.sv_len = clf.support_.shape[0]
 
     if params.probability:
@@ -58,28 +66,59 @@ def main():
         train_roc_auc = None
         test_roc_auc = None
 
-    predict_train_time, y_pred = bench.measure_function_time(
-        clf_predict, X_train, params=params)
-    train_acc = bench.accuracy_score(y_train, y_pred)
+    # predict_train_time, y_pred = bench.measure_function_time(
+    #     clf_predict, X_train, params=params)
+    # train_acc = bench.accuracy_score(y_train, y_pred)
 
-    _, y_pred = bench.measure_function_time(
-        clf_predict, X_test, params=params)
-    test_acc = bench.accuracy_score(y_test, y_pred)
+    # _, y_pred = bench.measure_function_time(
+    #     clf_predict, X_test, params=params)
+    # test_acc = bench.accuracy_score(y_test, y_pred)
+
+    full_data = np.concatenate([X_train, X_test], axis=0)
+    pred_time_set_x1 = np.zeros([100,])
+    pred_time_set_x10 = np.zeros([100,])
+    pred_time_set_x100 = np.zeros([100,])
+    print(X_test.shape)
+    print('start pred')
+    for i in range(100):
+        print(i)
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x1, _ = bench.measure_function_time(
+            clf.predict, full_data[i].reshape(1,-1), params=params)
+
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x10, _ = bench.measure_function_time(
+            clf.predict, full_data[10 * i:10 * (i + 1)], params=params)
+        
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x100, _ = bench.measure_function_time(
+            clf.predict, full_data[100 * i:100 * (i + 1)], params=params)
+
+        pred_time_set_x1[i] = predict_time_x1
+        pred_time_set_x10[i] = predict_time_x10
+        pred_time_set_x100[i] = predict_time_x100
+
+    inf_time_x1 = np.mean(pred_time_set_x1)
+    inf_time_x10 = np.mean(pred_time_set_x10)
+    inf_time_x100 = np.mean(pred_time_set_x100)
 
     bench.print_output(
         library='sklearn',
         algorithm='nuSVC',
-        stages=['training', state_predict],
-        params=params, functions=['NuSVC.fit', f'NuSVC.{state_predict}'],
-        times=[fit_time, predict_train_time],
+        stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
+        params=params, functions=['predict', 'predict', 'predict'],
+        times=[inf_time_x1, inf_time_x10, inf_time_x100],
         metric_type=['accuracy', 'log_loss', 'roc_auc', 'n_sv'],
         metrics=[
-            [train_acc, test_acc],
-            [train_log_loss, test_log_loss],
-            [train_roc_auc, test_roc_auc],
-            [int(clf.n_support_.sum()), int(clf.n_support_.sum())],
+            [None, None, None],
+            [None, None, None],
+            [None, None, None],
+            [None, None, None],
         ],
-        data=[X_train, X_train],
+        data=[full_data, full_data, full_data],
         alg_instance=clf,
     )
 

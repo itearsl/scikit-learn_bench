@@ -21,9 +21,13 @@ import bench
 
 def main():
     from sklearn.decomposition import PCA
+    from sklearn.cluster import KMeans
+    import numpy as np
 
     # Load random data
     X_train, X_test, _, _ = bench.load_data(params, generated_data=['X_train'])
+
+    X_test_t = X_test.iloc[:2000]
 
     if params.n_components is None:
         p, n = X_train.shape
@@ -36,20 +40,52 @@ def main():
     # Time fit
     fit_time, _ = bench.measure_function_time(pca.fit, X_train, params=params)
 
+    kmeans = KMeans(n_clusters=16)
+    kmeans.fit(X_test_t)
     # Time transform
-    transform_time, _ = bench.measure_function_time(
-        pca.transform, X_train, params=params)
+    # transform_time, _ = bench.measure_function_time(
+    #     pca.transform, X_train, params=params)
+
+    full_data = np.concatenate([X_train, X_test], axis=0)
+    pred_time_set_x1 = np.zeros([100,])
+    pred_time_set_x10 = np.zeros([100,])
+    pred_time_set_x100 = np.zeros([100,])
+    print(X_test.shape)
+    print('start pred')
+    for i in range(100):
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x1, _ = bench.measure_function_time(
+            pca.transform, full_data[i].reshape(1,-1), params=params)
+
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x10, _ = bench.measure_function_time(
+            pca.transform, full_data[10 * i:10 * (i + 1)], params=params)
+        
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x100, _ = bench.measure_function_time(
+            pca.transform, full_data[100 * i:100 * (i + 1)], params=params)
+
+        pred_time_set_x1[i] = predict_time_x1
+        pred_time_set_x10[i] = predict_time_x10
+        pred_time_set_x100[i] = predict_time_x100
+
+    inf_time_x1 = np.mean(pred_time_set_x1)
+    inf_time_x10 = np.mean(pred_time_set_x10)
+    inf_time_x100 = np.mean(pred_time_set_x100)
 
     bench.print_output(
         library='sklearn',
         algorithm='PCA',
-        stages=['training', 'transformation'],
+        stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
         params=params,
-        functions=['PCA.fit', 'PCA.transform'],
-        times=[fit_time, transform_time],
+        functions=['PCA.transform', 'PCA.transform', 'PCA.transform'],
+        times=[inf_time_x1, inf_time_x10, inf_time_x100],
         metric_type='noise_variance',
-        metrics=[pca.noise_variance_, pca.noise_variance_],
-        data=[X_train, X_test],
+        metrics=[None, None, None],
+        data=[full_data, full_data, full_data],
         alg_instance=pca,
     )
 

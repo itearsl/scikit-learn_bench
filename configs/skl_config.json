@@ -56,6 +56,48 @@
                     "training": {
                         "n_samples": 3000000
                     }
+                },
+                {
+                    "source": "npy",
+                    "name": "higgs1m",
+                    "training":
+                    {
+                        "x": "data/higgs1m_x_train.npy",
+                        "y": "data/higgs1m_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/higgs1m_x_test.npy",
+                        "y": "data/higgs1m_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "epsilon",
+                    "training":
+                    {
+                        "x": "data/epsilon_x_train.npy",
+                        "y": "data/epsilon_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/epsilon_x_test.npy",
+                        "y": "data/epsilon_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "airline-ohe",
+                    "training":
+                    {
+                        "x": "data/airline-ohe_x_train.npy",
+                        "y": "data/airline-ohe_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/airline-ohe_x_test.npy",
+                        "y": "data/airline-ohe_y_test.npy"
+                    }
                 }
             ],
             "time-method": "box_filter",
@@ -104,6 +146,48 @@
                     "n_features": 4000,
                     "training": {
                         "n_samples": 6000
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "higgs1m",
+                    "training":
+                    {
+                        "x": "data/higgs1m_x_train.npy",
+                        "y": "data/higgs1m_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/higgs1m_x_test.npy",
+                        "y": "data/higgs1m_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "epsilon",
+                    "training":
+                    {
+                        "x": "data/epsilon_x_train.npy",
+                        "y": "data/epsilon_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/epsilon_x_test.npy",
+                        "y": "data/epsilon_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "airline-ohe",
+                    "training":
+                    {
+                        "x": "data/airline-ohe_x_train.npy",
+                        "y": "data/airline-ohe_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/airline-ohe_x_test.npy",
+                        "y": "data/airline-ohe_y_test.npy"
                     }
                 }
             ],
@@ -214,9 +298,70 @@
                     "training": {
                         "n_samples": 2000000
                     }
+                },
+                {
+                    "source": "npy",
+                    "name": "fried",
+                    "training":
+                    {
+                        "x": "data/fried_x_train.npy",
+                        "y": "data/fried_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/fried_x_test.npy",
+                        "y": "data/fried_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "year_prediction_msd",
+                    "training":
+                    {
+                        "x": "data/year_prediction_msd_x_train.npy",
+                        "y": "data/year_prediction_msd_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/year_prediction_msd_x_test.npy",
+                        "y": "data/year_prediction_msd_y_test.npy"
+                    }
                 }
             ],
             "alpha": 5
+        },
+        {
+            "algorithm": "knn_regr",
+            "dataset": [
+                {
+                    "source": "npy",
+                    "name": "fried",
+                    "training":
+                    {
+                        "x": "data/fried_x_train.npy",
+                        "y": "data/fried_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/fried_x_test.npy",
+                        "y": "data/fried_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "year_prediction_msd",
+                    "training":
+                    {
+                        "x": "data/year_prediction_msd_x_train.npy",
+                        "y": "data/year_prediction_msd_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/year_prediction_msd_x_test.npy",
+                        "y": "data/year_prediction_msd_y_test.npy"
+                    }
+                }
+            ]
         },
         {
             "algorithm": "linear",
@@ -235,6 +380,34 @@
                     "n_features": 100,
                     "training": {
                         "n_samples": 2000000
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "fried",
+                    "training":
+                    {
+                        "x": "data/fried_x_train.npy",
+                        "y": "data/fried_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/fried_x_test.npy",
+                        "y": "data/fried_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "year_prediction_msd",
+                    "training":
+                    {
+                        "x": "data/year_prediction_msd_x_train.npy",
+                        "y": "data/year_prediction_msd_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/year_prediction_msd_x_test.npy",
+                        "y": "data/year_prediction_msd_y_test.npy"
                     }
                 }
             ]
@@ -276,6 +449,48 @@
                     "n_features": 100,
                     "training": {
                         "n_samples": 2000000
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "higgs1m",
+                    "training":
+                    {
+                        "x": "data/higgs1m_x_train.npy",
+                        "y": "data/higgs1m_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/higgs1m_x_test.npy",
+                        "y": "data/higgs1m_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "epsilon",
+                    "training":
+                    {
+                        "x": "data/epsilon_x_train.npy",
+                        "y": "data/epsilon_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/epsilon_x_test.npy",
+                        "y": "data/epsilon_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "airline-ohe",
+                    "training":
+                    {
+                        "x": "data/airline-ohe_x_train.npy",
+                        "y": "data/airline-ohe_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/airline-ohe_x_test.npy",
+                        "y": "data/airline-ohe_y_test.npy"
                     }
                 }
             ],
@@ -445,6 +660,49 @@
                         "x": "data/klaverjas_x_test.npy",
                         "y": "data/klaverjas_y_test.npy"
                     }
+                    
+                },
+                {
+                    "source": "npy",
+                    "name": "higgs1m",
+                    "training":
+                    {
+                        "x": "data/higgs1m_x_train.npy",
+                        "y": "data/higgs1m_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/higgs1m_x_test.npy",
+                        "y": "data/higgs1m_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "epsilon",
+                    "training":
+                    {
+                        "x": "data/epsilon_x_train.npy",
+                        "y": "data/epsilon_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/epsilon_x_test.npy",
+                        "y": "data/epsilon_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "airline-ohe",
+                    "training":
+                    {
+                        "x": "data/airline-ohe_x_train.npy",
+                        "y": "data/airline-ohe_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/airline-ohe_x_test.npy",
+                        "y": "data/airline-ohe_y_test.npy"
+                    }
                 }
             ],
             "nu": 0.7,
@@ -507,6 +765,34 @@
                     {
                         "x": "data/california_housing_x_test.npy",
                         "y": "data/california_housing_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "fried",
+                    "training":
+                    {
+                        "x": "data/fried_x_train.npy",
+                        "y": "data/fried_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/fried_x_test.npy",
+                        "y": "data/fried_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "year_prediction_msd",
+                    "training":
+                    {
+                        "x": "data/year_prediction_msd_x_train.npy",
+                        "y": "data/year_prediction_msd_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/year_prediction_msd_x_test.npy",
+                        "y": "data/year_prediction_msd_y_test.npy"
                     }
                 }
             ],
@@ -789,6 +1075,34 @@
         {
             "algorithm": "elasticnet",
             "dataset": [
+                {
+                    "source": "npy",
+                    "name": "year_prediction_msd",
+                    "training":
+                    {
+                        "x": "data/year_prediction_msd_x_train.npy",
+                        "y": "data/year_prediction_msd_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/year_prediction_msd_x_test.npy",
+                        "y": "data/year_prediction_msd_y_test.npy"
+                    }
+                },
+                {
+                    "source": "npy",
+                    "name": "fried",
+                    "training":
+                    {
+                        "x": "data/fried_x_train.npy",
+                        "y": "data/fried_y_train.npy"
+                    },
+                    "testing":
+                    {
+                        "x": "data/fried_x_test.npy",
+                        "y": "data/fried_y_test.npy"
+                    }
+                },
                 {
                     "source": "npy",
                     "name": "year_prediction_msd",

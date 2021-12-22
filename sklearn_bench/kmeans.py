@@ -23,10 +23,11 @@ import numpy as np
 
 def main():
     from sklearn.cluster import KMeans
+    from sklearn.linear_model import Ridge
     from sklearn.metrics.cluster import davies_bouldin_score
 
     # Load and convert generated data
-    X_train, X_test, _, _ = bench.load_data(params)
+    X_train, X_test, _, y_test = bench.load_data(params)
 
     X_init: Any
     if params.filei == 'k-means++':
@@ -56,32 +57,59 @@ def main():
     # Time fit
     fit_time, kmeans = bench.measure_function_time(fit_kmeans, X_train,
                                                    X_init, params=params)
-
-    train_predict = kmeans.predict(X_train)
-    acc_train = davies_bouldin_score(X_train, train_predict)
+    ridge = Ridge()
+    ridge.fit(X_test, y_test)
+    # train_predict = kmeans.predict(X_train)
+    # acc_train = davies_bouldin_score(X_train, train_predict)
 
     # Time predict
-    predict_time, test_predict = bench.measure_function_time(
-        kmeans.predict, X_test, params=params)
+    # predict_time, test_predict = bench.measure_function_time(
+    #     kmeans.predict, X_test, params=params)
 
-    acc_test = davies_bouldin_score(X_test, test_predict)
+    # acc_test = davies_bouldin_score(X_test, test_predict)
+
+    full_data = np.concatenate([X_train, X_test], axis=0)
+    
+    pred_time_set_x1 = np.zeros([100,])
+    pred_time_set_x10 = np.zeros([100,])
+    pred_time_set_x100 = np.zeros([100,])
+    print(X_test.shape)
+    for i in range(100):
+        ridge.predict(X_train)
+        ridge.predict(X_train)
+        predict_time_x1, _ = bench.measure_function_time(
+            kmeans.predict, full_data[i].reshape(1,-1), params=params)
+
+        ridge.predict(X_train)
+        ridge.predict(X_train)
+        predict_time_x10, _ = bench.measure_function_time(
+            kmeans.predict, full_data[10 * i:10 * (i + 1)], params=params)
+        
+        ridge.predict(X_train)
+        ridge.predict(X_train)
+        predict_time_x100, _ = bench.measure_function_time(
+            kmeans.predict, full_data[100 * i:100 * (i + 1)], params=params)
+
+        pred_time_set_x1[i] = predict_time_x1
+        pred_time_set_x10[i] = predict_time_x10
+        pred_time_set_x100[i] = predict_time_x100
+
+    inf_time_x1 = np.mean(pred_time_set_x1)
+    inf_time_x10 = np.mean(pred_time_set_x10)
+    inf_time_x100 = np.mean(pred_time_set_x100)
 
     bench.print_output(
         library='sklearn',
         algorithm='kmeans',
-        stages=['training', 'prediction'],
+        stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
         params=params,
-        functions=['KMeans.fit', 'KMeans.predict'],
-        times=[fit_time, predict_time],
-        metric_type=['davies_bouldin_score', 'inertia', 'iter'],
-        metrics=[
-            [acc_train, acc_test],
-            [kmeans.inertia_, kmeans.inertia_],
-            [kmeans.n_iter_, kmeans.n_iter_]
-        ],
-        data=[X_train, X_test],
+        functions=['kmeans.predict', 'kmeans.predict', 'kmeans.predict'],
+        times=[inf_time_x1, inf_time_x10, inf_time_x100],
+        metric_type='none',
+        metrics=[None, None, None],
+        data=[full_data, full_data, full_data],
         alg_instance=kmeans,
-    )
+        )
 
 
 if __name__ == "__main__":

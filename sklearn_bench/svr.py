@@ -22,9 +22,14 @@ import numpy as np
 
 def main():
     from sklearn.svm import SVR
+    from sklearn.cluster import KMeans
+    import numpy as np
 
     X_train, X_test, y_train, y_test = bench.load_data(params)
     y_train = np.asfortranarray(y_train).ravel()
+
+    X_train_t = X_train.iloc[:2000]
+    y_train_t = y_train[:2000]
 
     if params.gamma is None:
         params.gamma = 1.0 / X_train.shape[1]
@@ -37,34 +42,68 @@ def main():
     regr = SVR(C=params.C, epsilon=params.epsilon, kernel=params.kernel,
                cache_size=params.cache_size_mb, tol=params.tol, gamma=params.gamma,
                degree=params.degree)
+    kmeans = KMeans(n_clusters=16)
+    kmeans.fit(X_train_t)
 
-    fit_time, _ = bench.measure_function_time(regr.fit, X_train, y_train, params=params)
+    fit_time, _ = bench.measure_function_time(regr.fit, X_train_t, y_train_t, params=params)
     params.sv_len = regr.support_.shape[0]
+    print('train')
 
-    predict_train_time, y_pred = bench.measure_function_time(
-        regr.predict, X_train, params=params)
-    train_rmse = bench.rmse_score(y_train, y_pred)
-    train_r2 = bench.r2_score(y_train, y_pred)
+    # predict_train_time, y_pred = bench.measure_function_time(
+    #     regr.predict, X_train, params=params)
+    # train_rmse = bench.rmse_score(y_train, y_pred)
+    # train_r2 = bench.r2_score(y_train, y_pred)
 
-    _, y_pred = bench.measure_function_time(
-        regr.predict, X_test, params=params)
-    test_rmse = bench.rmse_score(y_test, y_pred)
-    test_r2 = bench.r2_score(y_test, y_pred)
+    # _, y_pred = bench.measure_function_time(
+    #     regr.predict, X_test, params=params)
+    # test_rmse = bench.rmse_score(y_test, y_pred)
+    # test_r2 = bench.r2_score(y_test, y_pred)
+
+    full_data = np.concatenate([X_train, X_test], axis=0)
+    pred_time_set_x1 = np.zeros([100,])
+    pred_time_set_x10 = np.zeros([100,])
+    pred_time_set_x100 = np.zeros([100,])
+    print(X_test.shape)
+    print('start pred')
+    for i in range(100):
+        print(i)
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x1, _ = bench.measure_function_time(
+            regr.predict, full_data[i].reshape(1,-1), params=params)
+
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x10, _ = bench.measure_function_time(
+            regr.predict, full_data[10 * i:10 * (i + 1)], params=params)
+        
+        kmeans.predict(X_test)
+        kmeans.predict(X_test)
+        predict_time_x100, _ = bench.measure_function_time(
+            regr.predict, full_data[100 * i:100 * (i + 1)], params=params)
+
+        pred_time_set_x1[i] = predict_time_x1
+        pred_time_set_x10[i] = predict_time_x10
+        pred_time_set_x100[i] = predict_time_x100
+
+    inf_time_x1 = np.mean(pred_time_set_x1)
+    inf_time_x10 = np.mean(pred_time_set_x10)
+    inf_time_x100 = np.mean(pred_time_set_x100)
 
     bench.print_output(
         library='sklearn',
         algorithm='SVR',
-        stages=['training', 'prediction'],
+        stages=['inferenceX1', 'inferenceX10', 'inferenceX100'],
         params=params,
-        functions=['SVR.fit', 'SVR.predict'],
-        times=[fit_time, predict_train_time],
+        functions=['SVR.predict', 'SVR.predict', 'SVR.predict'],
+        times=[inf_time_x1, inf_time_x10, inf_time_x100],
         metric_type=['rmse', 'r2_score', 'n_sv'],
         metrics=[
-            [train_rmse, test_rmse],
-            [train_r2, test_r2],
-            [int(regr.n_support_.sum()), int(regr.n_support_.sum())],
+            [None, None, None],
+            [None, None, None],
+            [None, None, None],
         ],
-        data=[X_train, X_train],
+        data=[full_data, full_data, full_data],
         alg_instance=regr,
     )
 
