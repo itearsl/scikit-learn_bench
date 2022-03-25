@@ -32,7 +32,8 @@ def main():
                                     weights=params.weights,
                                     algorithm=params.method,
                                     metric=params.metric,
-                                    n_jobs=params.n_jobs)
+                                    n_jobs=params.n_jobs,
+                                    p=params.value)
 
     # Measure time and accuracy on fitting
     train_time, _ = bench.measure_function_time(
@@ -104,5 +105,6 @@ if __name__ == "__main__":
                         help='Algorithm used to compute the nearest neighbors')
     parser.add_argument('--metric', type=str, default='euclidean',
                         help='Distance metric to use')
+    parser.add_argument('--value', default=2, type=int)
     params = bench.parse_args(parser)
     bench.run_with_context(params, main)
