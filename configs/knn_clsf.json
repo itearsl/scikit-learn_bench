@@ -26,7 +26,7 @@
                 }
             ],
             "workload-size": "medium",
-            "n-neighbors": 2,
+            "n-neighbors": [2, 100],
             "metric": "minkowski",
             "value": 3
         },
@@ -62,7 +62,7 @@
                 }
             ],
             "workload-size": "medium",
-            "n-neighbors": 5,
+            "n-neighbors": [5, 100],
             "metric": "minkowski",
             "value": 3
         },
