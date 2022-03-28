@@ -26,105 +26,7 @@
                 }
             ],
             "workload-size": "medium",
-            "n-neighbors": [2, 100],
-            "metric": "chebyshev"
-        },
-        {
-            "dataset": [
-                {
-                    "source": "npy",
-                    "name": "higgs_150K",
-                    "training":
-                    {
-                        "x": "data/higgs_150K_x_train.npy",
-                        "y": "data/higgs_150K_y_train.npy"
-                    },
-                    "testing":
-                    {
-                        "x": "data/higgs_150K_x_test.npy",
-                        "y": "data/higgs_150K_y_test.npy"
-                    }
-                },
-                {
-                    "source": "npy",
-                    "name": "hepmass_150K",
-                    "training":
-                    {
-                        "x": "data/hepmass_150K_x_train.npy",
-                        "y": "data/hepmass_150K_y_train.npy"
-                    },
-                    "testing":
-                    {
-                        "x": "data/hepmass_150K_x_test.npy",
-                        "y": "data/hepmass_150K_y_test.npy"
-                    }
-                }
-            ],
-            "workload-size": "medium",
-            "n-neighbors": [5, 100],
-            "metric": "chebyshev"
-        },
-        {
-            "dataset": [
-                {
-                    "source": "npy",
-                    "name": "cifar_binary",
-                    "training":
-                    {
-                        "x": "data/cifar_binary_x_train.npy",
-                        "y": "data/cifar_binary_y_train.npy"
-                    },
-                    "testing":
-                    {
-                        "x": "data/cifar_binary_x_test.npy",
-                        "y": "data/cifar_binary_y_test.npy"
-                    }
-                }
-            ],
-            "workload-size": "medium",
-            "n-neighbors": 7,
-            "metric": "chebyshev"
-        },
-        {
-            "dataset": [
-                {
-                    "source": "npy",
-                    "name": "mnist",
-                    "training":
-                    {
-                        "x": "data/mnist_x_train.npy",
-                        "y": "data/mnist_y_train.npy"
-                    },
-                    "testing":
-                    {
-                        "x": "data/mnist_x_test.npy",
-                        "y": "data/mnist_y_test.npy"
-                    }
-                }
-            ],
-            "workload-size": "medium",
-            "n-neighbors": 5,
-            "metric": "chebyshev"
-        },
-        {
-            "dataset": [
-                {
-                    "source": "npy",
-                    "name": "epsilon_100K",
-                    "training":
-                    {
-                        "x": "data/epsilon_100K_x_train.npy",
-                        "y": "data/epsilon_100K_y_train.npy"
-                    },
-                    "testing":
-                    {
-                        "x": "data/epsilon_100K_x_train.npy",
-                        "y": "data/epsilon_100K_y_train.npy"
-                    }
-                }
-            ],
-            "workload-size": "medium",
-            "n-neighbors": [2, 100],
+            "n-neighbors": 2,
             "metric": "minkowski",
             "value": 3
         },
@@ -160,7 +62,7 @@
                 }
             ],
             "workload-size": "medium",
-            "n-neighbors": [5, 100],
+            "n-neighbors": 5,
             "metric": "minkowski",
             "value": 3
         },
